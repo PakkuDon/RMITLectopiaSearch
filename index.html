@@ -3,6 +3,63 @@
     <head>
         <title>RMIT Lectopia Search - Index</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>
+            var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
+            function showCourses(searchTerm) {
+                $.ajax({
+                    url: "data.json",
+                    method: "GET"
+                }).done(function(data) {
+                    var searchTerm = $("#searchTerm").val().toLowerCase();
+                    var results = [];
+                    data = JSON.parse(data);
+
+                    // Clear results from previous run
+                    $("#results").empty();
+
+                    // Filter courses by search term
+                    if (typeof searchTerm !== "undefined") {
+                        for (var key in data.Courses) {
+                            var course = data.Courses[key];
+                            if (course["Name"].toLowerCase().indexOf(searchTerm) >= 0) {
+                                results.push(course);
+                            }
+                        }
+                    }
+
+                    // Sort course results by name
+                    results.sort(function(a, b) {
+                        var nameA = a.Name.toLowerCase();
+                        var nameB = b.Name.toLowerCase();
+
+                        if (nameA === nameB) {
+                            return 0;
+                        }
+                        else {
+                            return (nameA > nameB) ? 1 : -1;
+                        }
+                    });
+
+                    // List courses
+                    for (var i = 0; i < results.length; i++) {
+                        var $link = $("<a>").html(results[i].Name)
+                        .attr("href", "recordings.html?id=" + results[i].ID);
+                        $("#results").append("<tr><td>" + $link.prop("outerHTML") + "</td></tr>");
+                    }
+                });
+            }
+
+            $(document).ready(function() {
+                // Display full list of courses
+                showCourses();
+
+                // Register search form's submit action
+                $("#searchForm").submit(function() {
+                    var searchTerm = $("#searchTerm").val();
+                    showCourses(searchTerm);
+                });
+            });
+        </script>
     </head>
     <body>
         <header>
@@ -16,6 +73,7 @@
                 <input type="submit" value="Search" />
             </fieldset>
         </form>
+        <h3>Results</h3>
         <table id="results">
         </table>
         <footer>
