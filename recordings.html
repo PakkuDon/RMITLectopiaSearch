@@ -4,6 +4,7 @@
         <title>RMIT Lectopia Search - Recordings</title>
     </head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/jquery.xdomainajax.js"></script>
     <script>
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
 
@@ -39,6 +40,45 @@
                         $("#courseName").html(course.Name);
                         var pageLinks = course.PageLinks;
                         $("#lectopiaLink").attr("href", BASE_URL + pageLinks[0]);
+
+                        // Parse document at links
+                        // TODO: Create AJAX calls for other fragments
+                        var link = BASE_URL + pageLinks[0];
+
+                        // Retrieve recordings from first page
+                        $.ajax({
+                            url: link,
+                            type: "GET",
+                            success: function(result) {
+                                // http://stackoverflow.com/a/15217348
+                                var data = result.responseText.replace(/<img [^>]*src=['"]([^'"]+)[^>]*>/gi, function (match, capture) {return "<img no_load_src=\"" +capture+ "\" />";});
+
+                                var $response = $(data);
+                                $recordingNodes = $response.find("table .mainindex");
+                                $.each($recordingNodes, function() {
+                                    // Retrieve general recording details
+                                    var $header = $(this).find(".sectionHeading");
+                                    var recordingID = $header.find("a").attr("id");
+                                    var date = $header.find("h3").text();
+                                    var duration = $header.find("td")[1].innerHTML;
+
+                                    // Retrieve available formats for current recording
+                                    var $formatForms = $(this).find("form[name*=Download]");
+                                    var formats = [];
+                                    $.each($formatForms, function() {
+                                        var $options = $(this).find("option:gt(2)");
+                                        $.each($options, function() {
+                                            var $option = $(this);
+                                            formats.push({
+                                                id: $option.attr("value"),
+                                                name: $option.html()
+                                            });
+                                        });
+                                    });
+                                });
+                            }
+                        });
+
                     }
                 });
             }
