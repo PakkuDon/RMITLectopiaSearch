@@ -75,6 +75,24 @@
                                             });
                                         });
                                     });
+
+                                    // Create HTML elements to store recording details
+                                    var $recording = $("<div>").addClass("recording");
+                                    var $details = $("<div>").addClass("details");
+                                    $details.append("<p>" +  date + "|" + duration + "</p>");
+
+                                    var $formats = $("<div>").addClass("formats");
+                                    $formats.append("<p>Available formats:</p>");
+
+                                    for (var i = 0; i < formats.length; i++) {
+                                        $formats.append("<p>" + formats[i].name + "</p>");
+                                    };
+
+                                    $recording.append($details);
+                                    $recording.append($formats);
+
+                                    // Add recording details to page
+                                    $("#results").append($recording);
                                 });
                             }
                         });
@@ -91,14 +109,14 @@
         <p>
             <a href="index.html">Back to index</a>
         </p>
-        <h3>Viewing recordings for <span id="courseName"></span></h3>
+        <h3><span id="courseName"></span></h3>
 
         <p>
             <a id="lectopiaLink" href="">View list on Lectopia</a>
         </p>
 
-        <table id="results">
-        </table>
+        <div id="results">
+        </div>
         <footer>
             <a href="http://www.github.com/PakkuDon">GitHub link</a>
         </footer>
