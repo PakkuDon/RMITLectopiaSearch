@@ -2,9 +2,9 @@
 <html>
     <head>
         <title>RMIT Lectopia Search - Index</title>
+        <link rel="stylesheet" href="style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script>
-            var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
             function showCourses(searchTerm) {
                 $.ajax({
                     url: "data.json",
@@ -62,22 +62,23 @@
         </script>
     </head>
     <body>
-        <header>
-            RMIT Lectopia Search
-        </header>
-        <form id="searchForm" onsubmit="return false;">
-            <fieldset>
-                <legend>Search</legend>
-                <label for="searchTerm">Search term:</label>
-                <input id="searchTerm" type="text" />
-                <input type="submit" value="Search" />
-            </fieldset>
-        </form>
-        <h3>Results</h3>
-        <table id="results">
-        </table>
-        <footer>
-            <a href="http://www.github.com/PakkuDon">GitHub link</a>
-        </footer>
+        <div id="container">
+            <header>
+                <h1>RMIT Lectopia Search</h1>
+            </header>
+            <div id="content">
+                <form id="searchForm" onsubmit="return false;">
+                    <label for="searchTerm">Search term:</label>
+                    <input id="searchTerm" type="text" />
+                    <input class="button" type="submit" value="Search" />
+                </form>
+                <h3>Results</h3>
+                <table id="results">
+                </table>
+            </div>
+            <footer>
+                <a href="http://www.github.com/PakkuDon">GitHub link</a>
+            </footer>
+        </div>
     </body>
 </html>

@@ -1,0 +1,77 @@
+/* General */
+html {
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #DDDDDD;
+}
+
+p {
+    margin: 0px;
+}
+
+header, footer {
+    background-color: #222222;
+    color: #EEEEEE;
+    padding: 5px;
+}
+
+header a, footer a {
+    color: #EEEEEE;
+}
+
+header h1 {
+    font-weight: bold;
+    font-size: 24px;
+    padding-left: 5px;
+    margin-bottom: 0px;
+}
+
+#container {
+    margin: 10px;
+}
+
+#content {
+    background-color: #FFFFFF;
+    padding: 10px;
+}
+
+#content a {
+    color: #AA0000;
+    text-decoration: none;
+}
+
+#content a:hover {
+    color: #440000;
+    text-decoration: underline;
+}
+
+
+/* Styles specific to index page */
+.button {
+    background-color: #F9F9F9;
+    border: 1px solid #333333;
+    padding: 2px 20px;
+}
+
+.button:hover {
+    background-color: #FFFFFF;
+}
+
+/* Styles specific to recording page */
+.recording {
+    background-color: #F9F9F9;
+    border: 1px solid #000;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.recording p {
+    padding: 3px;
+}
+
+.details {
+    background-color: #222222;
+    color: #EEEEEE;
+}

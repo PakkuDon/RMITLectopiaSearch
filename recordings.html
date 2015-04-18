@@ -3,6 +3,7 @@
     <head>
         <title>RMIT Lectopia Search - Recordings</title>
     </head>
+    <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="js/jquery.xdomainajax.js"></script>
     <script>
@@ -79,7 +80,8 @@
                                     // Create HTML elements to store recording details
                                     var $recording = $("<div>").addClass("recording");
                                     var $details = $("<div>").addClass("details");
-                                    $details.append("<p>" +  date + "|" + duration + "</p>");
+                                    $details.append("<p class=\"timestamp\">Date recorded: " +  date + "</p>");
+                                    $details.append("<p class\"duration\">Duration: " + duration + "</p>");
 
                                     var $formats = $("<div>").addClass("formats");
                                     $formats.append("<p>Available formats:</p>");
@@ -103,22 +105,26 @@
         });
     </script>
     <body>
-        <header>
-            RMIT Lectopia Search
-        </header>
-        <p>
-            <a href="index.html">Back to index</a>
-        </p>
-        <h3><span id="courseName"></span></h3>
+        <div id="container">
+            <header>
+                <h1>RMIT Lectopia Search</h1>
+            </header>
+            <div id="content">
+                <p>
+                    <a href="index.html">Back to index</a>
+                </p>
+                <h3><span id="courseName"></span></h3>
 
-        <p>
-            <a id="lectopiaLink" href="">View list on Lectopia</a>
-        </p>
+                <p>
+                    <a id="lectopiaLink" href="">View list on Lectopia</a>
+                </p>
 
-        <div id="results">
+                <div id="results">
+                </div>
+            </div>
+            <footer>
+                <a href="http://www.github.com/PakkuDon">GitHub link</a>
+            </footer>
         </div>
-        <footer>
-            <a href="http://www.github.com/PakkuDon">GitHub link</a>
-        </footer>
     </body>
 </html>
