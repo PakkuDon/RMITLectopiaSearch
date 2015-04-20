@@ -9,6 +9,76 @@
     <script>
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
 
+        // Prototype for recording objects
+        function Recording(id, date, duration) {
+            this.id = id;
+            this.date = date;
+            this.duration = duration;
+            this.formats = [];
+        }
+
+        // Prototype for recording formats
+        function Format(id, name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        /**
+         * generateCallbacks() - Returns an array of AJAX calls for each
+         * link contained in links.
+         * Callbacks append new recordings to recordings array.
+         */
+        function generateCallbacks(links, recordings) {
+            var callbacks = [];
+
+            for (var i = 0; i < links.length; i++) {
+                var link = BASE_URL + links[i];
+
+                callbacks.push($.ajax({
+                    url: link,
+                    type: "GET",
+                    success: function(result) {
+                        // Remove images - prevents AJAX call from trying to load them
+                        // http://stackoverflow.com/a/15217348
+                        var data = result.responseText.replace(/<img [^>]*src=['"]([^'"]+)[^>]*>/gi, function (match, capture) {return "<img no_load_src=\"" +capture+ "\" />";});
+
+                        var $response = $(data);
+                        var $recordingNodes = $response.find("table .mainindex");
+                        $.each($recordingNodes, function() {
+                            // Retrieve general recording details
+                            var $header = $(this).find(".sectionHeading");
+                            var recordingID = $header.find("a").attr("id");
+                            var date = $header.find("h3").text()
+                                .replace(/\s+/g, " ").replace("-", "").trim();
+                            var duration = $header.find("td")[1].innerHTML
+                                .replace(/\s+/g, " ").trim();
+
+                            // Construct recording instance
+                            var recording = new Recording(recordingID, date, duration);
+
+                            // Retrieve available formats for current recording
+                            var $formatForms = $(this).find("form[name*=Download]");
+                            $.each($formatForms, function() {
+                                var $options = $(this).find("option:gt(1)");
+                                $.each($options, function() {
+                                    var $option = $(this);
+                                    recording.formats.push({
+                                        id: $option.attr("value"),
+                                        name: $option.html()
+                                    });
+                                });
+                            });
+
+                            // Add recordings to collection
+                            recordings.push(recording);
+                        });
+                    }
+                }));
+            }
+
+            return callbacks;
+        }
+
         $(document).ready(function() {
             // Retrieve GET parameters
             var request = window.location.search.substring(1);
@@ -41,64 +111,54 @@
                         $("#courseName").html(course.Name);
                         var pageLinks = course.PageLinks;
                         $("#lectopiaLink").attr("href", BASE_URL + pageLinks[0]);
+                        var recordings = [];
 
-                        // Parse document at links
-                        // TODO: Create AJAX calls for other fragments
-                        var link = BASE_URL + pageLinks[0];
+                        // Parse documents at page links
+                        $.when.apply($, generateCallbacks(pageLinks, recordings)).done(function() {
+                            // Remove loading message
+                            $("#loadingMessage").remove();
 
-                        // Retrieve recordings from first page
-                        $.ajax({
-                            url: link,
-                            type: "GET",
-                            success: function(result) {
-                                // http://stackoverflow.com/a/15217348
-                                var data = result.responseText.replace(/<img [^>]*src=['"]([^'"]+)[^>]*>/gi, function (match, capture) {return "<img no_load_src=\"" +capture+ "\" />";});
+                            // Sort recordings by date in ascending order
+                            recordings.sort(function(a, b) {
+                                return Date.parse(a.date) - Date.parse(b.date);
+                            });
 
-                                var $response = $(data);
-                                $recordingNodes = $response.find("table .mainindex");
-                                $.each($recordingNodes, function() {
-                                    // Retrieve general recording details
-                                    var $header = $(this).find(".sectionHeading");
-                                    var recordingID = $header.find("a").attr("id");
-                                    var date = $header.find("h3").text();
-                                    var duration = $header.find("td")[1].innerHTML;
+                            // Create HTML elements to store recording details
+                            var content = "";
+                            for (var i = 0; i < recordings.length; i++) {
+                                var recording = recordings[i];
 
-                                    // Retrieve available formats for current recording
-                                    var $formatForms = $(this).find("form[name*=Download]");
-                                    var formats = [];
-                                    $.each($formatForms, function() {
-                                        var $options = $(this).find("option:gt(2)");
-                                        $.each($options, function() {
-                                            var $option = $(this);
-                                            formats.push({
-                                                id: $option.attr("value"),
-                                                name: $option.html()
-                                            });
-                                        });
-                                    });
+                                // Write general recording / session details
+                                var details = "<div class=\"details\">"
+                                    + "<p>" + "Date recorded: " + recording.date + "</p>"
+                                    + "<p>" + "Duration: " + recording.duration + "</p>"
+                                    + "</div>";
 
-                                    // Create HTML elements to store recording details
-                                    var $recording = $("<div>").addClass("recording");
-                                    var $details = $("<div>").addClass("details");
-                                    $details.append("<p class=\"timestamp\">Date recorded: " +  date + "</p>");
-                                    $details.append("<p class\"duration\">Duration: " + duration + "</p>");
+                                // List available file types for current recording
+                                var formatList = "<p>Available formats:</p>";
+                                if (recording.formats.length === 0) {
+                                    formatList += "<p>No formats available</p>";
+                                }
+                                else {
+                                    for (var j = 0; j < recording.formats.length; j++) {
+                                        formatList += "<p>" + recording.formats[j].name + "</p>";
+                                    }
+                                }
 
-                                    var $formats = $("<div>").addClass("formats");
-                                    $formats.append("<p>Available formats:</p>");
+                                var formats = "<div class=\"formats\">"
+                                    + formatList
+                                    + "</div>";
 
-                                    for (var i = 0; i < formats.length; i++) {
-                                        $formats.append("<p>" + formats[i].name + "</p>");
-                                    };
-
-                                    $recording.append($details);
-                                    $recording.append($formats);
-
-                                    // Add recording details to page
-                                    $("#results").append($recording);
-                                });
+                                // Append recording details to result
+                                content += "<div class=\"recording\">"
+                                    + details
+                                    + formats
+                                    + "</div>";
                             }
-                        });
 
+                            // Add recording details to page
+                            $("#results").append(content);
+                        });
                     }
                 });
             }
@@ -118,6 +178,7 @@
                 <p>
                     <a id="lectopiaLink" href="">View list on Lectopia</a>
                 </p>
+                <span id="loadingMessage">Fetching data...</span>
 
                 <div id="results">
                 </div>
