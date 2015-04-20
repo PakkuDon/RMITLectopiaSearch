@@ -15,7 +15,7 @@
                     data = JSON.parse(data);
 
                     // Clear results from previous run
-                    $("#results").empty();
+                    $("#results").find("tbody").empty();
 
                     // Filter courses by search term
                     if (typeof searchTerm !== "undefined") {
@@ -43,8 +43,14 @@
                     // List courses
                     for (var i = 0; i < results.length; i++) {
                         var $link = $("<a>").html(results[i].Name)
-                        .attr("href", "recordings.html?id=" + results[i].ID);
-                        $("#results").append("<tr><td>" + $link.prop("outerHTML") + "</td></tr>");
+                            .attr("href", "recordings.html?id=" + results[i].ID);
+                        var $row = $("<tr>");
+                        var timestamp = results[i].LastUpdated !== null ?
+                            results[i].LastUpdated.replace("T", " ") : "N/A";
+
+                        $row.append("<td>" + $link.prop("outerHTML") + "</td>");
+                        $row.append("<td>" + timestamp + "</td>");
+                        $("#results").find("tbody").append($row);
                     }
                 });
             }
@@ -74,6 +80,12 @@
                 </form>
                 <h3>Results</h3>
                 <table id="results">
+                    <thead>
+                        <th>Name</th>
+                        <th>Last Updated</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
             <footer>
