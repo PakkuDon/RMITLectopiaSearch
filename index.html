@@ -41,17 +41,21 @@
                     });
 
                     // List courses
+                    var content = "";
                     for (var i = 0; i < results.length; i++) {
-                        var $link = $("<a>").html(results[i].Name)
-                            .attr("href", "recordings.html?id=" + results[i].ID);
-                        var $row = $("<tr>");
                         var timestamp = results[i].LastUpdated !== null ?
                             results[i].LastUpdated.replace("T", " ") : "N/A";
 
-                        $row.append("<td>" + $link.prop("outerHTML") + "</td>");
-                        $row.append("<td>" + timestamp + "</td>");
-                        $("#results").find("tbody").append($row);
+                        content += "<tr>"
+                            + "<td>"
+                            + "<a href=\"" + "recordings.html?id="
+                                + results[i].ID + "\">"
+                                + results[i].Name + "</a>"
+                            + "</td>"
+                            + "<td>" + timestamp + "</td>"
+                            + "</tr>";
                     }
+                    $("#results").find("tbody").append(content);
                 });
             }
 
