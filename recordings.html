@@ -8,6 +8,7 @@
     <script src="js/jquery.xdomainajax.js"></script>
     <script>
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
+        var CASTER_URL = BASE_URL + "casterframe.lasso?fid=";
 
         // Prototype for recording objects
         function Recording(id, date, duration) {
@@ -63,7 +64,7 @@
                                 $.each($options, function() {
                                     var $option = $(this);
                                     recording.formats.push({
-                                        id: $option.attr("value"),
+                                        id: $option.attr("value").split(",")[1],
                                         name: $option.html()
                                     });
                                 });
@@ -135,14 +136,23 @@
                                     + "</div>";
 
                                 // List available file types for current recording
-                                var formatList = "<p>Available formats:</p>";
+                                var formatList = "";
                                 if (recording.formats.length === 0) {
                                     formatList += "<p>No formats available</p>";
                                 }
                                 else {
+                                    formatList += "<p>Available formats:</p>";
+                                    formatList += "<ul>";
                                     for (var j = 0; j < recording.formats.length; j++) {
-                                        formatList += "<p>" + recording.formats[j].name + "</p>";
+                                        var format = recording.formats[j];
+                                        formatList += "<li>"
+                                            + "<a href=\"" + CASTER_URL + format.id
+                                                + "\" target=\"_blank\">"
+                                                + format.name
+                                                + "</a>"
+                                            + "</li>";
                                     }
+                                    formatList += "</ul>";
                                 }
 
                                 var formats = "<div class=\"formats\">"
