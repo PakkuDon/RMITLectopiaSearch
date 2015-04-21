@@ -8,11 +8,11 @@
             function showCourses(searchTerm) {
                 $.ajax({
                     url: "data.json",
+                    dataType: "json",
                     method: "GET"
                 }).done(function(data) {
                     var searchTerm = $("#searchTerm").val().toLowerCase();
                     var results = [];
-                    data = JSON.parse(data);
 
                     // Clear results from previous run
                     $("#results").find("tbody").empty();

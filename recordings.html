@@ -98,9 +98,9 @@
             else {
                 $.ajax({
                     url: "data.json",
+                    dataType: "json",
                     method: "GET"
-                }).done(function(jsonData) {
-                    var data = JSON.parse(jsonData);
+                }).done(function(data) {
                     var course = data.Courses[args["id"]];
 
                     // If course not found, show error
