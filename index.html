@@ -11,6 +11,13 @@
                     dataType: "json",
                     method: "GET"
                 }).done(function(data) {
+                    var lastUpdated = new Date(data.DateGenerated);
+                    var statusText = "Data last updated: "
+                        + lastUpdated.toDateString() + " "
+                        + lastUpdated.getHours() + ":"
+                        + lastUpdated.getMinutes();
+                    $("#status").html(statusText);
+
                     var searchTerm = $("#searchTerm").val().toLowerCase();
                     var results = [];
 
@@ -60,6 +67,7 @@
             }
 
             $(document).ready(function() {
+                $("#status").html("Fetching data...");
                 // Display full list of courses
                 showCourses();
 
@@ -83,6 +91,7 @@
                     <input class="button" type="submit" value="Search" />
                 </form>
                 <h3>Results</h3>
+                <span id="status"></span>
                 <table id="results">
                     <thead>
                         <th>Name</th>
@@ -93,7 +102,8 @@
                 </table>
             </div>
             <footer>
-                <a href="http://www.github.com/PakkuDon">GitHub link</a>
+                <p>Disclaimer: All trademarks are the property of their respective owners.</p>
+                <a href="https://github.com/PakkuDon/RMITLectopiaSearch">GitHub link</a>
             </footer>
         </div>
     </body>

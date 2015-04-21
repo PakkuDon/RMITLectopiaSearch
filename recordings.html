@@ -92,7 +92,7 @@
 
             // If ID not supplied, return to index
             if (typeof args["id"] === "undefined") {
-                // Redirect
+                window.location.replace("index.html");
             }
             // Else, retrieve associated course's details
             else {
@@ -105,7 +105,7 @@
 
                     // If course not found, show error
                     if (typeof course === "undefined") {
-                        // Print error
+                        $("#status").html("Error: Course not found.");
                     }
                     // Else, display information and retrieve recordings
                     else {
@@ -115,9 +115,10 @@
                         var recordings = [];
 
                         // Parse documents at page links
+                        // Display recording details when all AJAX calls have been completed
                         $.when.apply($, generateCallbacks(pageLinks, recordings)).done(function() {
                             // Remove loading message
-                            $("#loadingMessage").remove();
+                            $("#status").remove();
 
                             // Sort recordings by date in ascending order
                             recordings.sort(function(a, b) {
@@ -126,46 +127,51 @@
 
                             // Create HTML elements to store recording details
                             var content = "";
-                            for (var i = 0; i < recordings.length; i++) {
-                                var recording = recordings[i];
-
-                                // Write general recording / session details
-                                var details = "<div class=\"details\">"
-                                    + "<p>" + "Date recorded: " + recording.date + "</p>"
-                                    + "<p>" + "Duration: " + recording.duration + "</p>"
-                                    + "</div>";
-
-                                // List available file types for current recording
-                                var formatList = "";
-                                if (recording.formats.length === 0) {
-                                    formatList += "<p>No formats available</p>";
-                                }
-                                else {
-                                    formatList += "<p>Available formats:</p>";
-                                    formatList += "<ul>";
-                                    for (var j = 0; j < recording.formats.length; j++) {
-                                        var format = recording.formats[j];
-                                        formatList += "<li>"
-                                            + "<a href=\"" + CASTER_URL + format.id
-                                                + "\" target=\"_blank\">"
-                                                + format.name
-                                                + "</a>"
-                                            + "</li>";
-                                    }
-                                    formatList += "</ul>";
-                                }
-
-                                var formats = "<div class=\"formats\">"
-                                    + formatList
-                                    + "</div>";
-
-                                // Append recording details to result
-                                content += "<div class=\"recording\">"
-                                    + details
-                                    + formats
-                                    + "</div>";
+                            // If no recordings found, add message
+                            if (recordings.length === 0) {
+                                content += "<p>No recordings found.</p>";
                             }
+                            else {
+                                for (var i = 0; i < recordings.length; i++) {
+                                    var recording = recordings[i];
 
+                                    // Write general recording / session details
+                                    var details = "<div class=\"details\">"
+                                        + "<p>" + "Date recorded: " + recording.date + "</p>"
+                                        + "<p>" + "Duration: " + recording.duration + "</p>"
+                                        + "</div>";
+
+                                    // List available file types for current recording
+                                    var formatList = "";
+                                    if (recording.formats.length === 0) {
+                                        formatList += "<p>No formats available</p>";
+                                    }
+                                    else {
+                                        formatList += "<p>Available formats:</p>";
+                                        formatList += "<ul>";
+                                        for (var j = 0; j < recording.formats.length; j++) {
+                                            var format = recording.formats[j];
+                                            formatList += "<li>"
+                                                + "<a href=\"" + CASTER_URL + format.id
+                                                    + "\" target=\"_blank\">"
+                                                    + format.name
+                                                    + "</a>"
+                                                + "</li>";
+                                        }
+                                        formatList += "</ul>";
+                                    }
+
+                                    var formats = "<div class=\"formats\">"
+                                        + formatList
+                                        + "</div>";
+
+                                    // Append recording details to result
+                                    content += "<div class=\"recording\">"
+                                        + details
+                                        + formats
+                                        + "</div>";
+                                }
+                            }
                             // Add recording details to page
                             $("#results").append(content);
                         });
@@ -188,13 +194,14 @@
                 <p>
                     <a id="lectopiaLink" href="">View list on Lectopia</a>
                 </p>
-                <span id="loadingMessage">Fetching data...</span>
+                <span id="status">Fetching data...</span>
 
                 <div id="results">
                 </div>
             </div>
             <footer>
-                <a href="http://www.github.com/PakkuDon">GitHub link</a>
+                <p>Disclaimer: All trademarks are the property of their respective owners.</p>
+                <a href="https://github.com/PakkuDon/RMITLectopiaSearch">GitHub link</a>
             </footer>
         </div>
     </body>
