@@ -7,6 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="js/jquery.xdomainajax.js"></script>
     <script src="js/html_utility.js"></script>
+    <script src="js/lectopia_parser.js"></script>
     <script>
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
         var CASTER_URL = BASE_URL + "casterframe.lasso?fid=";
@@ -40,38 +41,14 @@
                     url: link,
                     type: "GET",
                     success: function(result) {
+                        // Sanitize response string and parse response
                         var data = HtmlUtil.removeImages(result.responseText);
+                        var parser = new LectopiaParser();
+                        parser.load(data);
 
-                        var $response = $(data);
-                        var $recordingNodes = $response.find("table .mainindex");
-                        $.each($recordingNodes, function() {
-                            // Retrieve general recording details
-                            var $header = $(this).find(".sectionHeading");
-                            var recordingID = $header.find("a").attr("id");
-                            var date = $header.find("h3").text()
-                                .replace(/\s+/g, " ").replace("-", "").trim();
-                            var duration = $header.find("td")[1].innerHTML
-                                .replace(/\s+/g, " ").trim();
-
-                            // Construct recording instance
-                            var recording = new Recording(recordingID, date, duration);
-
-                            // Retrieve available formats for current recording
-                            var $formatForms = $(this).find("form[name*=Download]");
-                            $.each($formatForms, function() {
-                                var $options = $(this).find("option:gt(1)");
-                                $.each($options, function() {
-                                    var $option = $(this);
-                                    recording.formats.push({
-                                        id: $option.attr("value").split(",")[1],
-                                        name: $option.html()
-                                    });
-                                });
-                            });
-
-                            // Add recordings to collection
-                            recordings.push(recording);
-                        });
+                        // Add retrieved recordings to collection
+                        var retrievedRecordings = parser.getRecordings();
+                        recordings.push.apply(recordings, retrievedRecordings);
                     }
                 }));
             }
