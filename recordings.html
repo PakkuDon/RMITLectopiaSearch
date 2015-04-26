@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="js/jquery.xdomainajax.js"></script>
+    <script src="js/html_utility.js"></script>
     <script>
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
         var CASTER_URL = BASE_URL + "casterframe.lasso?fid=";
@@ -39,9 +40,7 @@
                     url: link,
                     type: "GET",
                     success: function(result) {
-                        // Remove images - prevents AJAX call from trying to load them
-                        // http://stackoverflow.com/a/15217348
-                        var data = result.responseText.replace(/<img [^>]*src=['"]([^'"]+)[^>]*>/gi, function (match, capture) {return "<img no_load_src=\"" +capture+ "\" />";});
+                        var data = HtmlUtil.removeImages(result.responseText);
 
                         var $response = $(data);
                         var $recordingNodes = $response.find("table .mainindex");
@@ -129,7 +128,7 @@
                             var content = "";
                             // If no recordings found, add message
                             if (recordings.length === 0) {
-                                content += "<p>No recordings found.</p>";
+                                content += HtmlUtil.paragraph("No recordings found.");
                             }
                             else {
                                 for (var i = 0; i < recordings.length; i++) {
@@ -137,30 +136,29 @@
 
                                     // Write general recording / session details
                                     var details = "<div class=\"details\">"
-                                        + "<p>" + "Date recorded: " + recording.date + "</p>"
-                                        + "<p>" + "Duration: " + recording.duration + "</p>"
+                                        + HtmlUtil.paragraph("Date recorded: " + recording.date)
+                                        + HtmlUtil.paragraph("Duration: " + recording.duration)
                                         + "</div>";
 
                                     // List available file types for current recording
                                     var formatList = "";
                                     if (recording.formats.length === 0) {
-                                        formatList += "<p>No formats available</p>";
+                                        formatList += HtmlUtil.paragraph("No formats available");
                                     }
                                     else {
-                                        formatList += "<p>Available formats:</p>";
-                                        formatList += "<ul>";
+                                        formatList += HtmlUtil.paragraph("Available formats:");
+
+                                        var formatLinks = [];
                                         for (var j = 0; j < recording.formats.length; j++) {
                                             var format = recording.formats[j];
-                                            formatList += "<li>"
-                                                + "<a href=\"" + CASTER_URL + format.id
-                                                    + "\" target=\"_blank\">"
-                                                    + format.name
-                                                    + "</a>"
-                                                + "</li>";
+                                            formatLinks.push(HtmlUtil.link(
+                                                CASTER_URL + format.id, format.name));
                                         }
-                                        formatList += "</ul>";
+
+                                        formatList += HtmlUtil.list(formatLinks, false);
                                     }
 
+                                    // Create container for recording formats
                                     var formats = "<div class=\"formats\">"
                                         + formatList
                                         + "</div>";
@@ -172,7 +170,7 @@
                                         + "</div>";
                                 }
                             }
-                            // Add recording details to page
+                            // Add details for all recordings to page
                             $("#results").append(content);
                         });
                     }

@@ -4,6 +4,7 @@
         <title>RMIT Lectopia Search - Index</title>
         <link rel="stylesheet" href="style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="js/html_utility.js"></script>
         <script>
             function showCourses(searchTerm) {
                 $.ajax({
@@ -55,9 +56,8 @@
 
                         content += "<tr>"
                             + "<td>"
-                            + "<a href=\"" + "recordings.html?id="
-                                + results[i].ID + "\">"
-                                + results[i].Name + "</a>"
+                            + HtmlUtil.link("recordings.html?id="
+                                + results[i].ID, results[i].Name)
                             + "</td>"
                             + "<td>" + timestamp + "</td>"
                             + "</tr>";
