@@ -50,13 +50,16 @@ header h1 {
 
 /* Styles specific to index page */
 .button {
-    background-color: #F9F9F9;
-    border: 1px solid #333333;
+    background-color: #EAEAEA;
+    border: 1px solid #555555;
     padding: 2px 20px;
+    display: inline-block;
+    margin: 1px;
 }
 
 .button:hover {
     background-color: #FFFFFF;
+    color: #AA0000;
 }
 
 /* Styles specific to recording page */

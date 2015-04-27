@@ -6,6 +6,13 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="js/html_utility.js"></script>
         <script>
+            var PAGE_SIZE = 75;
+
+            function showPage(pageId) {
+                $("div[class^=page]").hide();
+                $("." + pageId).show();
+            }
+
             function showCourses(searchTerm) {
                 $.ajax({
                     url: "data.json",
@@ -23,7 +30,7 @@
                     var results = [];
 
                     // Clear results from previous run
-                    $("#results").find("tbody").empty();
+                    $("#results").empty();
 
                     // Filter courses by search term
                     if (typeof searchTerm !== "undefined") {
@@ -48,12 +55,30 @@
                         }
                     });
 
-                    // List courses
+                    // Generate HTML to display results in a paged tabular format
                     var content = "";
                     for (var i = 0; i < results.length; i++) {
+                        if (i % PAGE_SIZE === 0) {
+                            // Close previous page
+                            if (i > 0) {
+                                content += "</tbody></table>"
+                                    + "</div>";
+                            }
+                            // Open tags for elements enclosing next page
+                            content += "<div class=\"page" + ((i / PAGE_SIZE) + 1) + "\">";
+                            content += "<table>"
+                                + "<thead>"
+                                + "<th>Name</th>"
+                                + "<th>Last Updated</th>"
+                                + "</thead>"
+                                + "<tbody>";
+                        }
+
+                        // Format timestamp
                         var timestamp = results[i].LastUpdated !== null ?
                             results[i].LastUpdated.replace("T", " ") : "N/A";
 
+                        // Add row containing course data
                         content += "<tr>"
                             + "<td>"
                             + HtmlUtil.link("recordings.html?id="
@@ -62,7 +87,32 @@
                             + "<td>" + timestamp + "</td>"
                             + "</tr>";
                     }
-                    $("#results").find("tbody").append(content);
+
+                    // Close last page container
+                    if (i % PAGE_SIZE !== 0) {
+                        content += "</tbody>"
+                            + "</table>"
+                            + "</div>";
+                    }
+
+                    // Generate page links
+                    var pageLinks = "<div>";
+                    for (var i = 0; i < results.length / PAGE_SIZE; i++) {
+                        var pageNum = i + 1;
+                        pageLinks += "<span class=\"button\" id=\"page"
+                            + pageNum
+                            + "\">"
+                            + pageNum
+                            + "</span>";
+                    }
+                    pageLinks += "</div>";
+
+                    // Add generated HTML to page
+                    $("#results").append(pageLinks);
+                    $("#results").append(content);
+
+                    // Hide all other pages except for the first
+                    showPage("page1");
                 });
             }
 
@@ -75,6 +125,11 @@
                 $("#searchForm").submit(function() {
                     var searchTerm = $("#searchTerm").val();
                     showCourses(searchTerm);
+                });
+
+                $("body").on("click", "div > .button", function(event) {
+                    var pageId = $(this).attr("id");
+                    showPage(pageId);
                 });
             });
         </script>
@@ -92,14 +147,8 @@
                 </form>
                 <h3>Results</h3>
                 <span id="status"></span>
-                <table id="results">
-                    <thead>
-                        <th>Name</th>
-                        <th>Last Updated</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div id="results">
+                </div>
             </div>
             <footer>
                 <p>Disclaimer: All trademarks are the property of their respective owners.</p>
