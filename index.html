@@ -5,13 +5,10 @@
         <link rel="stylesheet" href="style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="js/html_utility.js"></script>
+        <script src="js/pager.js"></script>
         <script>
             var PAGE_SIZE = 75;
-
-            function showPage(pageId) {
-                $("div[class^=page]").hide();
-                $("." + pageId).show();
-            }
+            var pager = new Pager();
 
             function showCourses(searchTerm) {
                 $.ajax({
@@ -55,70 +52,47 @@
                         }
                     });
 
-                    // Generate HTML to display results in a paged tabular format
-                    var content = "";
-                    for (var i = 0; i < results.length; i++) {
-                        if (i % PAGE_SIZE === 0) {
-                            // Close previous page
-                            if (i > 0) {
-                                content += "</tbody></table>"
-                                    + "</div>";
-                            }
-                            // Open tags for elements enclosing next page
-                            content += "<div class=\"page" + ((i / PAGE_SIZE) + 1) + "\">";
-                            content += "<table>"
-                                + "<thead>"
-                                + "<th>Name</th>"
-                                + "<th>Last Updated</th>"
-                                + "</thead>"
-                                + "<tbody>";
-                        }
 
+                    // Convert course data to table rows for paging
+                    var rows = results.map(function(course) {
                         // Format timestamp
-                        var timestamp = results[i].LastUpdated !== null ?
-                            results[i].LastUpdated.replace("T", " ") : "N/A";
+                        var timestamp = course.LastUpdated !== null ?
+                            course.LastUpdated.replace("T", " ") : "N/A";
 
-                        // Add row containing course data
-                        content += "<tr>"
+                        // Wrap course data in a table row element
+                        return "<tr>"
                             + "<td>"
                             + HtmlUtil.link("recordings.html?id="
-                                + results[i].ID, results[i].Name)
+                                + course.ID, course.Name)
                             + "</td>"
                             + "<td>" + timestamp + "</td>"
                             + "</tr>";
-                    }
 
-                    // Close last page container
-                    if (i % PAGE_SIZE !== 0) {
-                        content += "</tbody>"
-                            + "</table>"
-                            + "</div>";
-                    }
+                    });
+                    var header = "<table>"
+                        + "<thead>"
+                        + "<th>Name</th>"
+                        + "<th>Last Updated</th>"
+                        + "</thead>"
+                        + "<tbody>";
+                    var footer = "</tbody>"
+                        + "</table>"
+                        + "</div>";
 
-                    // Generate page links
-                    var pageLinks = "<div>";
-                    for (var i = 0; i < results.length / PAGE_SIZE; i++) {
-                        var pageNum = i + 1;
-                        pageLinks += "<span class=\"button\" id=\"page"
-                            + pageNum
-                            + "\">"
-                            + pageNum
-                            + "</span>";
-                    }
-                    pageLinks += "</div>";
+                    // Generate HTML to display results in a paged tabular format
+                    var pages = pager.createPagedList(rows, header, footer, PAGE_SIZE);
 
                     // Add generated HTML to page
-                    $("#results").append(pageLinks);
-                    $("#results").append(content);
+                    $("#results").append(pages);
 
                     // Hide all other pages except for the first
-                    showPage("page1");
+                    pager.showPage("page1");
                 });
             }
 
             $(document).ready(function() {
-                $("#status").html("Fetching data...");
                 // Display full list of courses
+                $("#status").html("Fetching data...");
                 showCourses();
 
                 // Register search form's submit action
@@ -127,9 +101,10 @@
                     showCourses(searchTerm);
                 });
 
+                // Switch pages whenever any of the page buttons are clicked
                 $("body").on("click", "div > .button", function(event) {
                     var pageId = $(this).attr("id");
-                    showPage(pageId);
+                    pager.showPage(pageId);
                 });
             });
         </script>
