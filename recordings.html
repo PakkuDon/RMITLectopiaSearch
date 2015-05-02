@@ -8,9 +8,14 @@
     <script src="js/jquery.xdomainajax.js"></script>
     <script src="js/html_utility.js"></script>
     <script src="js/lectopia_parser.js"></script>
+    <script src="js/pager.js"></script>
     <script>
+        // Constants - commonly used Strings
         var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
         var CASTER_URL = BASE_URL + "casterframe.lasso?fid=";
+
+        // Pager instance for constructing pages
+        var pager = new Pager();
 
         // Prototype for recording objects
         function Recording(id, date, duration) {
@@ -108,6 +113,7 @@
                                 content += HtmlUtil.paragraph("No recordings found.");
                             }
                             else {
+                                var recordingElements = [];
                                 for (var i = 0; i < recordings.length; i++) {
                                     var recording = recordings[i];
 
@@ -141,18 +147,30 @@
                                         + "</div>";
 
                                     // Append recording details to result
-                                    content += "<div class=\"recording\">"
+                                    recordingElements.push("<div class=\"recording\">"
                                         + details
                                         + formats
-                                        + "</div>";
+                                        + "</div>");
                                 }
+
+                                // Paginate recordings and add recording pages to page
+                                content = pager.createPagedList(recordingElements, "", "", 10);
+
+                                // Hide all other pages except for the first
+                                pager.showPage("page1");
                             }
-                            // Add details for all recordings to page
+
                             $("#results").append(content);
                         });
                     }
                 });
             }
+
+            // Switch pages whenever any of the page buttons are clicked
+            $("body").on("click", "div > .button", function(event) {
+                var pageId = $(this).attr("id");
+                pager.showPage(pageId);
+            });
         });
     </script>
     <body>

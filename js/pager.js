@@ -32,12 +32,30 @@ function Pager() {
     this.createPages = function(elements, header, footer, pageSize) {
         var text = "";
         var pageCount = Math.ceil(elements.length / pageSize);
+        var initialElementCount = elements.length;
 
         for (var i = 0; i < pageCount; i++) {
             // Fetch next page's content
             var pageContent = elements.splice(0, pageSize).join("");
+
+            // Calculate end-points
+            var startIndex = i * pageSize + 1;
+            var endIndex = startIndex - 1 + pageSize;
+            if (endIndex > initialElementCount) {
+
+                endIndex = initialElementCount;
+            }
+
+            // Generate String containing current page details
+            var datasetString = "<p>"
+                + "Displaying " + startIndex
+                + " to " + endIndex
+                + " of " + initialElementCount + " items."
+                + "</p>";
+
             // Append new page to result
             text += "<div class=\"page" +  (i + 1) + "\">"
+                + datasetString
                 + header
                 + pageContent
                 + footer
