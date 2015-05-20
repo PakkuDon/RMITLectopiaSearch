@@ -1,6 +1,7 @@
 /* General */
 html {
     font-family: sans-serif;
+    font-size: 100%;
 }
 
 body {
@@ -23,7 +24,7 @@ header a, footer a {
 
 header h1 {
     font-weight: bold;
-    font-size: 24px;
+    font-size: 125%;
     padding-left: 5px;
     margin-bottom: 0px;
 }
