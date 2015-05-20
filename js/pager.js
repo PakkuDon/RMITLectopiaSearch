@@ -94,9 +94,30 @@ function Pager() {
      * pageId: Name of the selected page.
      */
     this.showPage = function(pageId) {
+        var $selected = $("span[id=" + pageId +"]");
+
+        // Highlight selected page button
+        $(".button.selected").removeClass("selected");
+        $selected.addClass("selected");
+
         // Hide other pages
         $("div[class^=page]").hide();
-        // Display associated page
+        // Display selected page
         $("." + pageId).show();
+
+        // Collapse page links
+        $("span[id^=page]").hide();
+
+        // Show selected page button and adjacent buttons
+        var index = $("span[id^=page]").index($selected);
+        for (var i = index - 2; i <= index + 2; i++) {
+            $("span[id^=page]:eq(" + i + ")").show();
+
+        }
+
+        // Show buttons at end points
+        $("span[id^=page]:lt(3)").show();
+        $("span[id^=page]").slice(-3).show();
+
     }
 }

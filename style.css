@@ -63,6 +63,11 @@ header h1 {
     color: #AA0000;
 }
 
+.button.selected {
+    background-color: #440000;
+    color: #FFFFFF;
+}
+
 /* Styles specific to recording page */
 .recording {
     background-color: #F9F9F9;
