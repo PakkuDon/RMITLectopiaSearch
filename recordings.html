@@ -9,6 +9,7 @@
         <script src="js/html_utility.js"></script>
         <script src="js/lectopia_parser.js"></script>
         <script src="js/pager.js"></script>
+        <script src="js/course_list.js"></script>
         <script>
             // Constants - commonly used Strings
             var BASE_URL = "https://lectopia.rmit.edu.au/lectopia/";
@@ -31,7 +32,7 @@
                 this.name = name;
             }
 
-            /**
+        /**
          * generateCallbacks() - Returns an array of AJAX calls for each
          * link contained in links.
          * Callbacks append new recordings to recordings array.
@@ -82,7 +83,8 @@
                         dataType: "json",
                         method: "GET"
                     }).done(function(data) {
-                        var course = data.Courses[args["id"]];
+                        CourseList.load(data);
+                        var course = CourseList.find(args["id"]);
 
                         // If course not found, show error
                         if (typeof course === "undefined") {

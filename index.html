@@ -7,11 +7,59 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="js/html_utility.js"></script>
         <script src="js/pager.js"></script>
+        <script src="js/course_list.js"></script>
         <script>
             var PAGE_SIZE = 75;
             var pager = new Pager();
 
             function showCourses(searchTerm) {
+                // Clear results from previous run
+                $("#results").empty();
+
+                // Filter courses by given search term
+                var results = CourseList.findCourses(searchTerm);
+
+                // Convert course data to table rows for paging
+                var rows = results.map(function(course) {
+                    // Format timestamp
+                    var timestamp = course.LastUpdated !== null ?
+                        course.LastUpdated.replace("T", " ") : "N/A";
+
+                    // Wrap course data in a table row element
+                    return "<tr>"
+                        + "<td>"
+                        + HtmlUtil.link("recordings.html?id="
+                                        + course.ID, course.Name)
+                        + "</td>"
+                        + "<td>" + timestamp + "</td>"
+                        + "</tr>";
+
+                });
+
+                var header = "<table>"
+                    + "<thead>"
+                    + "<th>Name</th>"
+                    + "<th>Last Updated</th>"
+                    + "</thead>"
+                    + "<tbody>";
+                var footer = "</tbody>"
+                    + "</table>"
+                    + "</div>";
+
+                // Generate HTML to display results in a paged tabular format
+                var pages = pager.createPagedList(rows, header, footer, PAGE_SIZE);
+
+                // Add generated HTML to page
+                $("#results").append(pages);
+
+                // Hide all other pages except for the first
+                pager.showPage("page1");
+            }
+
+            $(document).ready(function() {
+                // Load course data and
+                // display full list of courses
+                $("#status").html("Fetching data...");
                 $.ajax({
                     url: "data.json",
                     dataType: "json",
@@ -22,83 +70,15 @@
                         + lastUpdated.toDateString() + " "
                         + lastUpdated.getHours() + ":"
                         + lastUpdated.getMinutes();
+
                     $("#status").html(statusText);
-
-                    var searchTerm = $("#searchTerm").val().toLowerCase();
-                    var results = [];
-
-                    // Clear results from previous run
-                    $("#results").empty();
-
-                    // Filter courses by search term
-                    if (typeof searchTerm !== "undefined") {
-                        for (var key in data.Courses) {
-                            var course = data.Courses[key];
-                            if (course["Name"].toLowerCase().indexOf(searchTerm) >= 0) {
-                                results.push(course);
-                            }
-                        }
-                    }
-
-                    // Sort course results by name
-                    results.sort(function(a, b) {
-                        var nameA = a.Name.toLowerCase();
-                        var nameB = b.Name.toLowerCase();
-
-                        if (nameA === nameB) {
-                            return 0;
-                        }
-                        else {
-                            return (nameA > nameB) ? 1 : -1;
-                        }
-                    });
-
-
-                    // Convert course data to table rows for paging
-                    var rows = results.map(function(course) {
-                        // Format timestamp
-                        var timestamp = course.LastUpdated !== null ?
-                            course.LastUpdated.replace("T", " ") : "N/A";
-
-                        // Wrap course data in a table row element
-                        return "<tr>"
-                            + "<td>"
-                            + HtmlUtil.link("recordings.html?id="
-                                + course.ID, course.Name)
-                            + "</td>"
-                            + "<td>" + timestamp + "</td>"
-                            + "</tr>";
-
-                    });
-                    var header = "<table>"
-                        + "<thead>"
-                        + "<th>Name</th>"
-                        + "<th>Last Updated</th>"
-                        + "</thead>"
-                        + "<tbody>";
-                    var footer = "</tbody>"
-                        + "</table>"
-                        + "</div>";
-
-                    // Generate HTML to display results in a paged tabular format
-                    var pages = pager.createPagedList(rows, header, footer, PAGE_SIZE);
-
-                    // Add generated HTML to page
-                    $("#results").append(pages);
-
-                    // Hide all other pages except for the first
-                    pager.showPage("page1");
+                    CourseList.load(data);
+                    showCourses();
                 });
-            }
-
-            $(document).ready(function() {
-                // Display full list of courses
-                $("#status").html("Fetching data...");
-                showCourses();
 
                 // Register search form's submit action
                 $("#searchForm").submit(function() {
-                    var searchTerm = $("#searchTerm").val();
+                    var searchTerm = $("#searchTerm").val().toLowerCase();
                     showCourses(searchTerm);
                 });
 
