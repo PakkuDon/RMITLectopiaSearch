@@ -12,18 +12,18 @@
         <script>
             var PAGE_SIZE = 75;
             var pager = new Pager();
+            var courseList = new CourseList();
 
             function showCourses(searchTerm) {
                 // Clear results from previous run
                 $("#results").empty();
 
                 // Filter courses by given search term
-                var results = CourseList.findCourses(searchTerm);
+                var results = courseList.findCourses(searchTerm);
 
                 // Convert course data to table rows for paging
                 var rows = results.map(function(course) {
                     // Format timestamp
-                    // TODO: Relative date string
                     var timestamp = course.LastUpdated !== null ?
                         DateUtil.toRelativeDateString(new Date(course.LastUpdated))
                         : "N/A";
@@ -63,18 +63,13 @@
                 // Load course data and
                 // display full list of courses
                 $("#status").html("Fetching data...");
-                $.ajax({
-                    url: "data.json",
-                    dataType: "json",
-                    method: "GET"
-                }).done(function(data) {
+                courseList.load(function(data) {
                     var lastUpdated = new Date(data.DateGenerated);
                     var statusText = "Data last updated: "
                         + DateUtil.toLongDateString(lastUpdated)
                         + " (" + DateUtil.toRelativeDateString(lastUpdated) + ")";
 
                     $("#status").html(statusText);
-                    CourseList.load(data);
                     showCourses();
                 });
 

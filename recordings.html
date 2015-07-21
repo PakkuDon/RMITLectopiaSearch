@@ -18,6 +18,8 @@
             // Pager instance for constructing pages
             var pager = new Pager();
 
+            var courseList = new CourseList();
+
             // Prototype for recording objects
             function Recording(id, date, duration) {
                 this.id = id;
@@ -78,13 +80,8 @@
                 }
                 // Else, retrieve associated course's details
                 else {
-                    $.ajax({
-                        url: "data.json",
-                        dataType: "json",
-                        method: "GET"
-                    }).done(function(data) {
-                        CourseList.load(data);
-                        var course = CourseList.find(args["id"]);
+                    courseList.load(function(data) {
+                        var course = courseList.find(args["id"]);
 
                         // If course not found, show error
                         if (typeof course === "undefined") {
