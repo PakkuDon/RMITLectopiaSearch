@@ -8,6 +8,7 @@
         <script src="js/html_utility.js"></script>
         <script src="js/pager.js"></script>
         <script src="js/course_list.js"></script>
+        <script src="js/date_utility.js"></script>
         <script>
             var PAGE_SIZE = 75;
             var pager = new Pager();
@@ -22,14 +23,16 @@
                 // Convert course data to table rows for paging
                 var rows = results.map(function(course) {
                     // Format timestamp
+                    // TODO: Relative date string
                     var timestamp = course.LastUpdated !== null ?
-                        course.LastUpdated.replace("T", " ") : "N/A";
+                        DateUtil.toRelativeDateString(new Date(course.LastUpdated))
+                        : "N/A";
 
                     // Wrap course data in a table row element
                     return "<tr>"
                         + "<td>"
                         + HtmlUtil.link("recordings.html?id="
-                                        + course.ID, course.Name)
+                              + course.ID, course.Name)
                         + "</td>"
                         + "<td>" + timestamp + "</td>"
                         + "</tr>";
@@ -67,9 +70,8 @@
                 }).done(function(data) {
                     var lastUpdated = new Date(data.DateGenerated);
                     var statusText = "Data last updated: "
-                        + lastUpdated.toDateString() + " "
-                        + lastUpdated.getHours() + ":"
-                        + lastUpdated.getMinutes();
+                        + DateUtil.toLongDateString(lastUpdated)
+                        + " (" + DateUtil.toRelativeDateString(lastUpdated) + ")";
 
                     $("#status").html(statusText);
                     CourseList.load(data);
