@@ -44,7 +44,7 @@ function showCourses(searchTerm) {
     $("#results").append(pages);
 
     // Hide all other pages except for the first
-    pager.showPage("page1");
+    showPage("page1");
 }
 
 $(document).ready(function() {
@@ -65,11 +65,5 @@ $(document).ready(function() {
     $("#searchForm").submit(function() {
         var searchTerm = $("#searchTerm").val().toLowerCase();
         showCourses(searchTerm);
-    });
-
-    // Switch pages whenever any of the page buttons are clicked
-    $("body").on("click", "div > .button", function(event) {
-        var pageId = $(this).attr("id");
-        pager.showPage(pageId);
     });
 });
