@@ -26,7 +26,7 @@
                 <div id="results">
                     <div id="page-links">
                         <span class="button" ng-repeat="i in getNumber(index.pageCount) track by $index" ng-click="index.setPage($index + 1)" 
-                         ng-class="{ selected: (index.currentPage == $index + 1)}">
+                            ng-class="{ selected: (index.currentPage == $index + 1)}" ng-show="$index < 3 || $index >= index.pageCount - 3 || ($index <= index.currentPage + 3 && $index >= index.currentPage - 3)">
                             {{ $index + 1 }}
                         </span>
                     </div>
