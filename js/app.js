@@ -1,10 +1,16 @@
 var app = angular.module('LectopiaSearch', []);
 // Controller responsible for search page
-app.controller('IndexController', ['$http', function($http) {
+app.controller('IndexController', ['$scope', '$http', function($scope, $http) {
     var self = this;
     this.lastUpdated = '';
     this.searchTerm = '';
     this.results = [];
+    // Paging fields
+    this.pageSize = 50;
+    this.currentPage;
+    this.pageCount;
+    this.startPos;
+    this.endPos;
     
     /* Find results matching given search string */
     this.loadResults = function() {
@@ -31,14 +37,33 @@ app.controller('IndexController', ['$http', function($http) {
                 DateUtil.toRelativeDateString(new Date(timestamp)) : 'N/A';
             }
 
-            // Set search results
+            // Set search results and page vars
             self.results = results;
+            self.pageCount = Math.ceil(self.results.length / self.pageSize);
+            self.setPage(1);
         })
         .error(function(error) {
             return error;
         });
     };
 
-    // Load all courses
+    /* Set visible records */
+    this.setPage = function(pageNo) {
+        self.currentPage = pageNo;
+        self.startPos = (pageNo - 1) * self.pageSize;
+        self.endPos = self.startPos + self.pageSize;
+        // Constrain end-point
+        if (self.endPos > self.results.length) {
+            self.endPos = self.results.length;
+        }
+    }
+
+    /* Return array of given size
+     * Helper function for generating page links */
+    $scope.getNumber = function(max) {
+        return new Array(max);
+    }
+
+    // Initialise results
     this.loadResults();
 }]);

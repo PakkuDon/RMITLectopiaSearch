@@ -21,10 +21,15 @@
                     Last updated: {{ index.lastUpdated | date:'medium' }}
                 </div>
                 <div ng-show="index.results.length > 0" id="result-count">
-                    Results: {{ index.results.length | number }}
+                    Displaying {{ index.startPos + 1 | number }} to {{ index.endPos | number }} of {{ index.results.length | number }} items.
                 </div>
-
                 <div id="results">
+                    <div id="page-links">
+                        <span class="button" ng-repeat="i in getNumber(index.pageCount) track by $index" ng-click="index.setPage($index + 1)" 
+                         ng-class="{ selected: (index.currentPage == $index + 1)}">
+                            {{ $index + 1 }}
+                        </span>
+                    </div>
                     <table>
                         <thead>
                             <tr>
@@ -33,7 +38,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="course in index.results | orderBy:'Name'">
+                        <tr ng-repeat="course in index.results | orderBy:'Name'" ng-show="$index >= index.startPos && $index < index.endPos">
                                 <td><a href="recordings.html?id={{ course.ID }}">{{ course.Name }}</a></td>
                                 <td>{{ course.LastUpdated }}</td>
                             </tr>
