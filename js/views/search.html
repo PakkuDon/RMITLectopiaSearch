@@ -1,0 +1,46 @@
+<form id="searchForm" ng-submit="search.loadResults()">
+    <label for="searchTerm">Search term:</label>
+    <input id="searchTerm" ng-model="search.searchTerm" type="text" />
+    <input class="button" type="submit" value="Search" />
+</form>
+
+<h3>Results</h3>
+<div id="status">
+    <div ng-hide="search.loading">
+        Last updated: {{ search.lastUpdated | date:'medium' }}
+    </div>
+    <div ng-show="search.loading">
+        <img src="spinner.gif" /> Loading results...
+    </div>
+</div>
+<div ng-hide="search.loading" 
+    ng-show="search.results.length > 0" id="result-count">
+    Displaying {{ search.startPos + 1 | number }} to {{ search.endPos | number }} of {{ search.results.length | number }} items.
+</div>
+<div id="results">
+    <div id="page-links">
+        <span class="button" ng-repeat="i in getNumber(search.pageCount) track by $index" 
+            ng-click="search.setPage($index + 1)" 
+            ng-class="{ selected: (search.currentPage == $index + 1)}" 
+            ng-show="$index < 3 || $index >= search.pageCount - 3 || ($index <= search.currentPage + 3 && $index >= search.currentPage - 3)">
+            {{ $index + 1 }}
+        </span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="course in search.results | orderBy:'Name'" ng-show="$index >= search.startPos && $index < search.endPos">
+                <td><a href="recordings.html?id={{ course.ID }}">{{ course.Name }}</a></td>
+                <td>{{ course.LastUpdated }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="search.results.length === 0 && search.loading === false">
+        No results found.
+    </div>
+</div>

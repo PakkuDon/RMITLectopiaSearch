@@ -10,52 +10,7 @@
             <header>
                 <h1>RMIT Lectopia Search</h1>
             </header>
-            <div id="content" ng-controller="IndexController as index">
-                <form id="searchForm" ng-submit="index.loadResults()">
-                    <label for="searchTerm">Search term:</label>
-                    <input id="searchTerm" ng-model="index.searchTerm" type="text" />
-                    <input class="button" type="submit" value="Search" />
-                </form>
-                <h3>Results</h3>
-                <div id="status">
-                    <div ng-hide="index.loading">
-                        Last updated: {{ index.lastUpdated | date:'medium' }}
-                    </div>
-                    <div ng-show="index.loading">
-                        <img src="spinner.gif" /> Loading results...
-                    </div>
-                </div>
-                <div ng-hide="index.loading" 
-                    ng-show="index.results.length > 0" id="result-count">
-                    Displaying {{ index.startPos + 1 | number }} to {{ index.endPos | number }} of {{ index.results.length | number }} items.
-                </div>
-                <div id="results">
-                    <div id="page-links">
-                        <span class="button" ng-repeat="i in getNumber(index.pageCount) track by $index" 
-                            ng-click="index.setPage($index + 1)" 
-                            ng-class="{ selected: (index.currentPage == $index + 1)}" 
-                            ng-show="$index < 3 || $index >= index.pageCount - 3 || ($index <= index.currentPage + 3 && $index >= index.currentPage - 3)">
-                            {{ $index + 1 }}
-                        </span>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Last Updated</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="course in index.results | orderBy:'Name'" ng-show="$index >= index.startPos && $index < index.endPos">
-                                <td><a href="recordings.html?id={{ course.ID }}">{{ course.Name }}</a></td>
-                                <td>{{ course.LastUpdated }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div ng-show="index.results.length === 0 && index.loading === false">
-                        No results found.
-                    </div>
-                </div>
+            <div id="content" ng-view>
             </div>
             <footer>
                 <p>Disclaimer: All trademarks are the property of their respective owners.</p>
@@ -66,9 +21,13 @@
         <!-- Libraries -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+        <script src="https://code.angularjs.org/1.3.15/angular-route.min.js"></script>
 
         <!-- AngularJS Modules -->
         <script src="js/app.js"></script>
+
+        <!-- Controllers -->
+        <script src="js/controllers/SearchController.js"></script>
 
         <!-- Other modules -->
         <script src="js/date_utility.js"></script>
