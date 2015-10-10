@@ -18,15 +18,23 @@
                 </form>
                 <h3>Results</h3>
                 <div id="status">
-                    Last updated: {{ index.lastUpdated | date:'medium' }}
+                    <div ng-hide="index.loading">
+                        Last updated: {{ index.lastUpdated | date:'medium' }}
+                    </div>
+                    <div ng-show="index.loading">
+                        <img src="spinner.gif" /> Loading results...
+                    </div>
                 </div>
-                <div ng-show="index.results.length > 0" id="result-count">
+                <div ng-hide="index.loading" 
+                    ng-show="index.results.length > 0" id="result-count">
                     Displaying {{ index.startPos + 1 | number }} to {{ index.endPos | number }} of {{ index.results.length | number }} items.
                 </div>
                 <div id="results">
                     <div id="page-links">
-                        <span class="button" ng-repeat="i in getNumber(index.pageCount) track by $index" ng-click="index.setPage($index + 1)" 
-                            ng-class="{ selected: (index.currentPage == $index + 1)}" ng-show="$index < 3 || $index >= index.pageCount - 3 || ($index <= index.currentPage + 3 && $index >= index.currentPage - 3)">
+                        <span class="button" ng-repeat="i in getNumber(index.pageCount) track by $index" 
+                            ng-click="index.setPage($index + 1)" 
+                            ng-class="{ selected: (index.currentPage == $index + 1)}" 
+                            ng-show="$index < 3 || $index >= index.pageCount - 3 || ($index <= index.currentPage + 3 && $index >= index.currentPage - 3)">
                             {{ $index + 1 }}
                         </span>
                     </div>
@@ -44,7 +52,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div ng-show="index.results.length === 0">
+                    <div ng-show="index.results.length === 0 && index.loading === false">
                         No results found.
                     </div>
                 </div>

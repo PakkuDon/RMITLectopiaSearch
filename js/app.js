@@ -5,6 +5,7 @@ app.controller('IndexController', ['$scope', '$http', function($scope, $http) {
     this.lastUpdated = '';
     this.searchTerm = '';
     this.results = [];
+    this.loading = false;
     // Paging fields
     this.pageSize = 50;
     this.currentPage;
@@ -14,8 +15,10 @@ app.controller('IndexController', ['$scope', '$http', function($scope, $http) {
     
     /* Find results matching given search string */
     this.loadResults = function() {
+        self.loading = true;
         $http.get('data.json')
         .success(function(data) {
+            self.loading = false;
             self.lastUpdated = new Date(data.DateGenerated);
             var results = [];
 
@@ -52,7 +55,13 @@ app.controller('IndexController', ['$scope', '$http', function($scope, $http) {
         self.currentPage = pageNo;
         self.startPos = (pageNo - 1) * self.pageSize;
         self.endPos = self.startPos + self.pageSize;
-        // Constrain end-point
+
+        // Constrain values of start and end points
+        if (self.results.length === 0) {
+            // Set to -1 since positions are zero-indexed
+            // View will add 1 to displayed value
+            self.startPos = -1;
+        }
         if (self.endPos > self.results.length) {
             self.endPos = self.results.length;
         }
