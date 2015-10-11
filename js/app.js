@@ -5,5 +5,12 @@ app.config(function($routeProvider) {
     .when('/', {
         controller: 'SearchController as search',
         templateUrl: 'js/views/search.html'
+    })
+    .when('/course/:id', {
+        controller: 'CourseController as course',
+        templateUrl: 'js/views/course.html'
+    })
+    .otherwise({
+        redirectTo: '/'
     });
 });

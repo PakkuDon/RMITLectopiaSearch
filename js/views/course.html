@@ -1,0 +1,30 @@
+<p>
+    <a href="index.html#/">Back to index</a>
+</p>
+<h3>{{ course.name }}</h3>
+<p>
+    <a ng-hide="course.loading" 
+        ng-href="{{course.lectopiaLink}}">
+        View list on Lectopia
+    </a>
+</p>
+<div ng-show="course.loading">
+    <img src="spinner.gif" /> Loading results...
+</div>
+
+<div id="results" ng-repeat="recording in course.recordings">
+    <div class="recording">
+        <div class="details">
+            <p>Date recorded: {{ recording.date }}</p>
+            <p>Duration: {{ recording.duration }}</p>
+        </div>
+        <div class="formats">
+            <p>Available formats:</p>
+            <ul>
+                <li ng-repeat="format in recording.formats">
+                    <a href="https://lectopia.rmit.edu.au/lectopia/casterframe.lasso?fid={{ format.id }}">{{ format.name }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -28,7 +28,12 @@ function LectopiaParser() {
                 .replace(/\s+/g, " ").trim();
 
             // Construct recording object from data
-            var recording = new Recording(id, date, duration);
+            var recording = {
+                id: id,
+                date: date,
+                duration: duration,
+                formats: []
+            };
 
             // Retrieve formats for current recording
             recording.formats = self.getFormats($(this));
@@ -55,7 +60,10 @@ function LectopiaParser() {
             var id = $option.attr("value").split(",")[1];
             var name = $option.html();
 
-            formats.push(new Format(id, name));
+            formats.push({
+                id: id,
+                name: name
+            });
         });
 
         return formats;

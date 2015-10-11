@@ -35,7 +35,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="course in search.results | orderBy:'Name'" ng-show="$index >= search.startPos && $index < search.endPos">
-                <td><a href="recordings.html?id={{ course.ID }}">{{ course.Name }}</a></td>
+                <td><a href="#/course/{{ course.ID }}">{{ course.Name }}</a></td>
                 <td>{{ course.LastUpdated }}</td>
             </tr>
         </tbody>
