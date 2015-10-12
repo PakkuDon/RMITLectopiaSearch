@@ -17,7 +17,7 @@ function LectopiaParser() {
         var self = this;
 
         // Iterate over elements containing recording data;
-        var $recordingNodes = this.data.find("table .mainindex");
+        var $recordingNodes = this.data.find(".mainindex");
         $.each($recordingNodes, function() {
             // Fetch general recording details
             var $header = $(this).find(".sectionHeading");

@@ -3,7 +3,7 @@
 </p>
 <h3>{{ course.name }}</h3>
 <p>
-    <a ng-hide="course.loading" 
+    <a ng-hide="course.lectopiaLink.length == 0" 
         ng-href="{{course.lectopiaLink}}">
         View list on Lectopia
     </a>
@@ -27,4 +27,7 @@
             </ul>
         </div>
     </div>
+</div>
+<div ng-hide="course.loading" ng-show="course.recordings.length === 0">
+    No recordings found.
 </div>
