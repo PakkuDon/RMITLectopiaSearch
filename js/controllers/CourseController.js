@@ -1,4 +1,5 @@
-app.controller('CourseController', ['$http', '$q', '$routeParams', 'courses', function($http, $q, $routeParams, courses) {
+app.controller('CourseController', ['$q', '$routeParams', 
+'courses', 'recordings', function($q, $routeParams, courses, recordings) {
     var self = this;
     var BASE_URL = 'https://lectopia.rmit.edu.au/lectopia/';
     var YQL_BASE = 'https://query.yahooapis.com/v1/public/yql?q=';
@@ -45,30 +46,17 @@ app.controller('CourseController', ['$http', '$q', '$routeParams', 'courses', fu
      * Return array of AJAX calls for each link 
      * contained in links.
      */
-    function generateCallbacks(links, recordings) {
+    function generateCallbacks(links, sessions) {
         var callbacks = [];
         
         // Construct $http calls to given links
         for (var i = 0; i < links.length; i++) {
-            // Using YQL for cross-domain access
-            var query = 'SELECT * FROM data.html.cssselect '
-                + 'WHERE url=\'' + BASE_URL + links[i] + '\' '
-                + 'AND css=\'.mainindex\'';
-            var queryUrl = YQL_BASE
-                + encodeURIComponent(query)
-                + '&format=xml'
-                + '&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
-
-            callbacks.push($http.get(queryUrl)
-            .success(function(data) {
-                // Remove image elements from response data
-                data = data.replace(/<img[^>]*>/g, "");
-                // Parse response and add recordings to given array
-                var parser = new LectopiaParser();
-                parser.load(data);
-                var retrievedRecordings = parser.getRecordings();
-                Array.prototype.push.apply(recordings, retrievedRecordings);
-            }));
+            callbacks.push(
+                recordings.getRecordings(BASE_URL + links[i], 
+                function(retrievedRecordings) {
+                    Array.prototype.push.apply(sessions, retrievedRecordings);
+                }
+            ));
         }
         return callbacks;
     }
