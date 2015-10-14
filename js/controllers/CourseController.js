@@ -1,5 +1,4 @@
-app.controller('CourseController', ['$http', '$q', '$routeParams', 
-function($http, $q, $routeParams) {
+app.controller('CourseController', ['$http', '$q', '$routeParams', 'courses', function($http, $q, $routeParams, courses) {
     var self = this;
     var BASE_URL = 'https://lectopia.rmit.edu.au/lectopia/';
     var YQL_BASE = 'https://query.yahooapis.com/v1/public/yql?q=';
@@ -11,8 +10,7 @@ function($http, $q, $routeParams) {
 
     // Load recording data
     this.loading = true;
-    $http.get('data.json')
-    .success(function(data) {
+    courses.success(function(data) {
         // Retrieve data associated with selected course
         var course = data.Courses[$routeParams.id];
         if (typeof course === 'undefined') {

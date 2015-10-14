@@ -1,5 +1,6 @@
 // Controller responsible for search page
-app.controller('SearchController', ['$scope', '$http', function($scope, $http) {
+app.controller('SearchController', ['$scope', 'courses', 
+function($scope, courses) {
     var self = this;
     this.lastUpdated = '';
     this.searchTerm = '';
@@ -16,8 +17,7 @@ app.controller('SearchController', ['$scope', '$http', function($scope, $http) {
     /* Find results matching given search string */
     this.loadResults = function() {
         self.loading = true;
-        $http.get('data.json')
-        .success(function(data) {
+        courses.success(function(data) {
             self.loading = false;
             self.lastUpdated = new Date(data.DateGenerated);
             var results = [];
