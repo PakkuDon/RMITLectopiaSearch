@@ -6,13 +6,8 @@ This program allows users to find recordings for courses on RMIT's Lectopia syst
 
 [Demo.](http://pakkudon.github.io/RMITLectopiaSearch/)
 
-## Pages
-
-- **index.html:** Displays a list of courses retrieved from the .json file created in Part 1. 
-- **recordings.html:** Retrieves recordings and their available download formats for a given course.
-
-## Libraries used
-
+## Tools used
 
 - [jQuery](https://jquery.com/)
-- [Cross domain mod for jQuery](https://github.com/padolsey-archive/jquery.fn/tree/master/cross-domain-ajax)
+- [AngularJS](https://angularjs.org/)
+- [YQL](https://developer.yahoo.com/yql)
