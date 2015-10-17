@@ -1,6 +1,6 @@
 // Controller responsible for search page
 app.controller('SearchController', ['$scope', 'courses', 
-function($scope, courses) {
+    function($scope, courses) {
     var self = this;
     this.lastUpdated = '';
     this.searchTerm = '';
@@ -32,12 +32,6 @@ function($scope, courses) {
                     .indexOf(self.searchTerm) >= 0) {
                     results.push(course);
                 }
-            
-                // Convert timestamps on results to relative date format
-                // TODO: See if this logic can be moved to the view
-                var timestamp = course.LastUpdated;
-                course['LastUpdated'] = timestamp !== null ?
-                DateUtil.toRelativeDateString(new Date(timestamp)) : 'N/A';
             }
 
             // Set search results and page vars

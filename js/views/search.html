@@ -7,7 +7,7 @@
 <h3>Results</h3>
 <div id="status">
     <div ng-hide="search.loading">
-        Last updated: {{ search.lastUpdated | date:'medium' }}
+        Last updated: {{ search.lastUpdated | date:'medium' }} ({{ search.lastUpdated | relativeDate }})
     </div>
     <div ng-show="search.loading">
         <img src="spinner.gif" /> Loading results...
@@ -36,7 +36,7 @@
         <tbody>
             <tr ng-repeat="course in search.results | orderBy:'Name'" ng-show="$index >= search.startPos && $index < search.endPos">
                 <td><a href="#/course/{{ course.ID }}">{{ course.Name }}</a></td>
-                <td>{{ course.LastUpdated }}</td>
+                <td ng-attr-title="{{ course.LastUpdated | date:'medium'}}">{{ course.LastUpdated | relativeDate }}</td>
             </tr>
         </tbody>
     </table>

@@ -28,6 +28,6 @@
         </div>
     </div>
 </div>
-<div ng-hide="course.loading" ng-show="course.recordings.length === 0">
+<div ng-hide="course.loading || course.recordings.length > 0">
     No recordings found.
 </div>
