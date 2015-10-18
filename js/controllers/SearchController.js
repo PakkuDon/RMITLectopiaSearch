@@ -8,11 +8,14 @@ app.controller('SearchController', ['$scope', 'courses',
     this.loading = false;
 
     // Paging fields
-    this.pageSize = 50;
     this.currentPage;
     this.pageCount;
     this.startPos;
     this.endPos;
+    this.pageSizes = [
+        25, 50, 75, 100, 150, 200
+    ];
+    this.pageSize = this.pageSizes[0];
     
     /* Find results matching given search string */
     this.loadResults = function() {
@@ -36,7 +39,6 @@ app.controller('SearchController', ['$scope', 'courses',
 
             // Set search results and page vars
             self.results = results;
-            self.pageCount = Math.ceil(self.results.length / self.pageSize);
             self.setPage(1);
         })
         .error(function(error) {
@@ -47,6 +49,7 @@ app.controller('SearchController', ['$scope', 'courses',
     /* Set visible records */
     this.setPage = function(pageNo) {
         self.currentPage = pageNo;
+        self.pageCount = Math.ceil(self.results.length / self.pageSize);
         self.startPos = (pageNo - 1) * self.pageSize;
         self.endPos = self.startPos + self.pageSize;
 
@@ -59,6 +62,14 @@ app.controller('SearchController', ['$scope', 'courses',
         if (self.endPos > self.results.length) {
             self.endPos = self.results.length;
         }
+    }
+
+    /* Set page size */
+    this.setPageSize = function(size) {
+        self.pageSize = size;
+
+        // Redisplay pages
+        self.setPage(1);
     }
 
     /* Return array of given size

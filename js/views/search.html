@@ -26,6 +26,12 @@
             {{ $index + 1 }}
         </span>
     </div>
+    <div>
+        Page size: 
+        <span ng-repeat="size in search.pageSizes">
+            <a ng-click="size !== search.pageSize && search.setPageSize(size)">{{ size }}</a>
+        </span>
+    </div>
     <table>
         <thead>
             <tr>
