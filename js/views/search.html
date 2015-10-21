@@ -19,6 +19,8 @@
 </div>
 <div id="results">
     <div id="page-links">
+        <a ng-click="search.toggleJumpField(true)" ng-hide="search.editingPage">Jump to page</a>
+        <input ng-blur="search.toggleJumpField(false)" ng-show="search.editingPage" type="number" ng-model="search.input.pageNo" />
         <span class="button" ng-repeat="i in getNumber(search.pageCount) track by $index" 
             ng-click="search.setPage($index + 1)" 
             ng-class="{ selected: (search.currentPage == $index + 1)}" 

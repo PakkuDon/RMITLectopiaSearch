@@ -8,7 +8,7 @@ app.controller('SearchController', ['$scope', 'courses',
     this.loading = false;
 
     // Paging fields
-    this.currentPage;
+    this.currentPage = 1;
     this.pageCount;
     this.startPos;
     this.endPos;
@@ -16,6 +16,11 @@ app.controller('SearchController', ['$scope', 'courses',
         25, 50, 75, 100, 150, 200
     ];
     this.pageSize = this.pageSizes[0];
+
+    this.editingPage = false;
+    this.input = {
+        pageNo: this.currentPage
+    };
     
     /* Find results matching given search string */
     this.loadResults = function() {
@@ -70,6 +75,18 @@ app.controller('SearchController', ['$scope', 'courses',
 
         // Redisplay pages
         self.setPage(1);
+    }
+
+    /* Toggle jump to field / input display 
+     * On hiding input field, jump to set page */
+    this.toggleJumpField = function(flag) {
+        self.editingPage = flag;
+        if (flag === false) {
+            self.setPage(self.input.pageNo);
+        }
+        else {
+            self.input.pageNo = self.currentPage;
+        }
     }
 
     /* Return array of given size
