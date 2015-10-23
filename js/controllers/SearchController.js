@@ -15,7 +15,8 @@ app.controller('SearchController', ['$scope', 'courses',
     this.pageSizes = [
         25, 50, 75, 100, 150, 200
     ];
-    this.pageSize = this.pageSizes[0];
+    // Set default page size to mid-value of available page sizes
+    this.pageSize = this.pageSizes[Math.ceil(this.pageSizes.length / 2)];
 
     this.editingPage = false;
     this.input = {

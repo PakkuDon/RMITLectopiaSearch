@@ -1,50 +1,59 @@
-<form id="searchForm" ng-submit="search.loadResults()">
-    <label for="searchTerm">Search term:</label>
-    <input id="searchTerm" ng-model="search.searchTerm" type="text" />
-    <input class="button" type="submit" value="Search" />
-</form>
+<div id="search-view">
+    <form id="searchForm" ng-submit="search.loadResults()">
+        <label for="searchTerm">Search term:</label>
+        <input id="searchTerm" ng-model="search.searchTerm" type="text" />
+        <input class="button" type="submit" value="Search" />
+    </form>
 
-<h3>Results</h3>
-<div id="status">
+    <h3>Results</h3>
     <div ng-hide="search.loading">
         Last updated: {{ search.lastUpdated | date:'medium' }} ({{ search.lastUpdated | relativeDate }})
+        <div ng-show="search.loading">
+            <img src="spinner.gif" /> Loading results...
+        </div>
     </div>
-    <div ng-show="search.loading">
-        <img src="spinner.gif" /> Loading results...
-    </div>
-</div>
-<div ng-hide="search.loading" 
-    ng-show="search.results.length > 0" id="result-count">
-    Displaying {{ search.startPos + 1 | number }} to {{ search.endPos | number }} of {{ search.results.length | number }} items.
-</div>
-<div id="results">
-    <div id="page-links">
-        <a ng-click="search.toggleJumpField(true)" ng-hide="search.editingPage">Jump to page</a>
-        <input ng-blur="search.toggleJumpField(false)" ng-show="search.editingPage" type="number" ng-model="search.input.pageNo" />
-        <span class="button" ng-repeat="i in getNumber(search.pageCount) track by $index" 
-            ng-click="search.setPage($index + 1)" 
-            ng-class="{ selected: (search.currentPage == $index + 1)}" 
-            ng-show="$index < 3 || $index >= search.pageCount - 3 || ($index <= search.currentPage + 3 && $index >= search.currentPage - 3)">
-            {{ $index + 1 }}
-        </span>
-    </div>
-    <div>
-        Page size: 
-        <span ng-repeat="size in search.pageSizes">
-            <a ng-click="size !== search.pageSize && search.setPageSize(size)">{{ size }}</a>
-        </span>
-    </div>
+    
+    <p>
+        <div ng-hide="search.loading" 
+            ng-show="search.results.length > 0" id="result-count">
+            Displaying {{ search.startPos + 1 | number }} to {{ search.endPos | number }} of {{ search.results.length | number }} items.
+        </div>
+
+        <div id="page-links">
+            <a ng-click="search.toggleJumpField(true)" ng-hide="search.editingPage">Jump to page</a>
+            <input ng-blur="search.toggleJumpField(false)" ng-show="search.editingPage" type="number" ng-model="search.input.pageNo" />
+            <span class="button" ng-repeat="i in getNumber(search.pageCount) track by $index" 
+                ng-click="search.setPage($index + 1)" 
+                ng-class="{ selected: (search.currentPage == $index + 1)}" 
+                ng-show="$index < 3 || $index >= search.pageCount - 3 || ($index < search.currentPage + 2 && $index >= search.currentPage - 3)">
+                {{ $index + 1 }}
+            </span>
+        </div>
+        <div id="size-links">
+            Page size: 
+            <span ng-repeat="size in search.pageSizes">
+                <a ng-hide="search.pageSize == size" 
+                   ng-click="search.setPageSize(size)">{{ size }}</a>
+               <span ng-show="search.pageSize == size">{{ size }}</span> 
+            </span>
+        </div>
+    </p>
+
     <table>
+        <colgroup>
+            <col span="1" style="width: 80%;" />
+            <col span="1" style="width: 20%;" />
+        </colgroup>
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Course</th>
                 <th>Last Updated</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="course in search.results | orderBy:'Name'" ng-if="$index >= search.startPos && $index < search.endPos">
                 <td><a href="#/course/{{ course.ID }}">{{ course.Name }}</a></td>
-                <td ng-attr-title="{{ course.LastUpdated | date:'medium'}}">{{ course.LastUpdated | relativeDate }}</td>
+                <td ng-attr-title="{{ course.LastUpdated | date:'medium' }}">{{ course.LastUpdated | relativeDate }}</td>
             </tr>
         </tbody>
     </table>
