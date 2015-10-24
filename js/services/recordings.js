@@ -40,7 +40,7 @@ app.factory('recordings', ['$http', function($http) {
             // Construct recording object from data
             var recording = {
                 id: id,
-                date: date,
+                date: Date.parse(date),
                 duration: duration
             };
 
@@ -52,21 +52,29 @@ app.factory('recordings', ['$http', function($http) {
     }
 
     return {
-        getRecordings: function(url, callback) {
+        getRecordings: function(url, successCallback, errorCallback) {
             // Construct YQL request
-            var query = 'SELECT * FROM data.html.cssselect '
-                + 'WHERE url=\'' + url + '\' '
-                + 'AND css=\'.mainindex\'';
+            var query = 'SELECT * FROM html '
+                + 'WHERE url=\'' + url + '\' ';
             var queryUrl = YQL_BASE
                 + encodeURIComponent(query)
-                + '&format=xml'
-                + '&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys';
+                + '&format=xml';
             // Once query completes, parse response data 
             // and pass data to callback
             return $http.get(queryUrl)
-            .success(function(data) {
-                callback(parser.getRecordings(data));
-            });
+                .success(function(data) {
+                    // Report error if YQL query timed out
+                    if (data.indexOf("body") === -1) {
+                        errorCallback(url);
+                    }
+                    else {
+                        successCallback(
+                            parser.getRecordings(data));
+                    }
+                })
+                .error(function(error) {
+                    errorCallback(url);
+                });
         }
     };
 }]);

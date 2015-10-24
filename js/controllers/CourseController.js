@@ -9,6 +9,8 @@ app.controller('CourseController', ['$q', '$routeParams',
     this.recordings = [];
     this.loading = true;
 
+    this.failedReads = [];
+
     // Load recording data
     this.loading = true;
     courses.success(function(data) {
@@ -24,11 +26,6 @@ app.controller('CourseController', ['$q', '$routeParams',
             // Fetch recording data
             $q.all(generateCallbacks(course.PageLinks, recordingData))
             .then(function() {
-                // Sort recordings by date
-                recordingData.sort(function(a, b) {
-                    return Date.parse(a.date) - Date.parse(b.date);
-                });
-
                 self.recordings = recordingData;
                 self.loading = false;
             });
@@ -55,9 +52,32 @@ app.controller('CourseController', ['$q', '$routeParams',
                 recordings.getRecordings(BASE_URL + links[i], 
                 function(retrievedRecordings) {
                     Array.prototype.push.apply(sessions, retrievedRecordings);
+                },
+                function(url) {
+                    self.failedReads.push({
+                        url: url,
+                        loading: false
+                    });
                 }
             ));
         }
         return callbacks;
+    }
+
+    this.readUrl = function(index) {
+        self.failedReads[index].loading = true;
+
+        // Attempt to read from URL that previously failed to load
+        recordings.getRecordings(self.failedReads[index].url, 
+        function(recordings) {
+            // On success, add retrieved recordings to model
+            // and removed entry from fail reads
+            Array.prototype.push.apply(self.recordings, recordings);
+            self.failedReads.splice(index, 1);
+        },
+        function(url) {
+            // Reset flag
+            self.failedReads[index].loading = false;
+        });
     }
 }]);
