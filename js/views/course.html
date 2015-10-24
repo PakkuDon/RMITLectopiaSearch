@@ -11,12 +11,15 @@
 <div ng-show="course.loading">
     <img src="spinner.gif" /> Loading results...
 </div>
+<div ng-hide="course.loading">
+    {{ course.recordings.length }} results.
+</div>
 
-<div class="error" ng-repeat="entry in course.failedReads"  
-    ng-click="course.failedReads[$index].loading == false && course.readUrl($index)">
-    Failed to read from <a target="_blank" ng-href="{{ entry.url }}">{{ entry.url }}</a>
-    <span ng-hide="entry.loading">Click here to try again.</span>
-    <span ng-show="entry.loading"><img src="spinner.gif" /> Loading...</span>
+<div class="error" ng-repeat="(url, loading) in course.failedReads"  
+    ng-click="loading == false && course.readUrl(url)">
+    Failed to read from <a target="_blank" ng-href="{{ url }}">{{ url }}</a>
+    <span ng-hide="loading">Click here to try again.</span>
+    <span ng-show="loading"><img src="spinner.gif" /> Loading...</span>
 </div>
 
 <div class="recording" ng-repeat="recording in course.recordings | orderBy:'date'">

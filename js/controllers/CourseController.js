@@ -9,7 +9,7 @@ app.controller('CourseController', ['$q', '$routeParams',
     this.recordings = [];
     this.loading = true;
 
-    this.failedReads = [];
+    this.failedReads = {};
 
     // Load recording data
     this.loading = true;
@@ -53,31 +53,31 @@ app.controller('CourseController', ['$q', '$routeParams',
                 function(retrievedRecordings) {
                     Array.prototype.push.apply(sessions, retrievedRecordings);
                 },
+                // If query times out, retain URL for later re-read
+                // Initialise 'loading' flag to false
                 function(url) {
-                    self.failedReads.push({
-                        url: url,
-                        loading: false
-                    });
+                    self.failedReads[url] = false;
                 }
             ));
         }
         return callbacks;
     }
 
-    this.readUrl = function(index) {
-        self.failedReads[index].loading = true;
+    this.readUrl = function(url) {
+        // Show loading spinner for associated entry
+        self.failedReads[url] = true;
 
         // Attempt to read from URL that previously failed to load
-        recordings.getRecordings(self.failedReads[index].url, 
+        recordings.getRecordings(url, 
         function(recordings) {
             // On success, add retrieved recordings to model
             // and removed entry from fail reads
             Array.prototype.push.apply(self.recordings, recordings);
-            self.failedReads.splice(index, 1);
+            delete self.failedReads[url];
         },
         function(url) {
             // Reset flag
-            self.failedReads[index].loading = false;
+            self.failedReads[url] = false;
         });
     }
 }]);
