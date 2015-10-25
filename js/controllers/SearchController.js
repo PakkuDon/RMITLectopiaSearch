@@ -28,16 +28,16 @@ app.controller('SearchController', ['$scope', 'courses',
         self.loading = true;
         courses.success(function(data) {
             self.loading = false;
-            self.lastUpdated = new Date(data.DateGenerated);
+            self.lastUpdated = new Date(data.dateGenerated);
             var results = [];
 
             // Filter courses by search string
-            for (var courseID in data.Courses) {
-                var course = data.Courses[courseID];
+            for (var courseID in data.courses) {
+                var course = data.courses[courseID];
                 
                 // If name contains search substring, add to results
                 if (self.searchTerm.length === 0 
-                    || course.Name.toLowerCase()
+                    || course.name.toLowerCase()
                     .indexOf(self.searchTerm) >= 0) {
                     results.push(course);
                 }

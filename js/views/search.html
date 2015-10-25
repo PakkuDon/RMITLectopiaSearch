@@ -51,9 +51,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="course in search.results | orderBy:'Name'" ng-if="$index >= search.startPos && $index < search.endPos">
-                <td><a href="#/course/{{ course.ID }}">{{ course.Name }}</a></td>
-                <td ng-attr-title="{{ course.LastUpdated | date:'medium' }}">{{ course.LastUpdated | relativeDate }}</td>
+            <tr ng-repeat="course in search.results | orderBy:'name'" ng-if="$index >= search.startPos && $index < search.endPos">
+                <td><a href="#/course/{{ course.id }}">{{ course.name }}</a></td>
+                <td ng-attr-title="{{ course.lastUpdated | date:'medium' }}">{{ course.lastUpdated | relativeDate }}</td>
             </tr>
         </tbody>
     </table>

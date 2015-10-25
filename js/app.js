@@ -35,7 +35,7 @@ app.filter('relativeDate', function() {
         diff = diff / 60;
         if (diff < 60) {
             return Math.floor(diff) + " "
-                + (Math.floor(diff) == 1 ? "minute" : "minute") + " ago";
+                + (Math.floor(diff) == 1 ? "minute" : "minutes") + " ago";
         }
 
         // Get hours passed since input date

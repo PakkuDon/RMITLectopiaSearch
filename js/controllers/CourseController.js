@@ -15,7 +15,7 @@ app.controller('CourseController', ['$q', '$routeParams',
     this.loading = true;
     courses.success(function(data) {
         // Retrieve data associated with selected course
-        var course = data.Courses[$routeParams.id];
+        var course = data.courses[$routeParams.id];
         if (typeof course === 'undefined') {
             self.name = 'Error: Course not found';
         }
@@ -24,15 +24,15 @@ app.controller('CourseController', ['$q', '$routeParams',
             var recordingData = [];
 
             // Fetch recording data
-            $q.all(generateCallbacks(course.PageLinks, recordingData))
+            $q.all(generateCallbacks(course.pageLinks, recordingData))
             .then(function() {
                 self.recordings = recordingData;
                 self.loading = false;
             });
             
             // Update view
-            self.name = course.Name;
-            self.lectopiaLink = BASE_URL + course.PageLinks[0];
+            self.name = course.name;
+            self.lectopiaLink = BASE_URL + course.pageLinks[0];
         }
     })
     .error(function(error) {
