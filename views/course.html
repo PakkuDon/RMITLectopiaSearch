@@ -9,7 +9,7 @@
     </a>
 </p>
 <div ng-show="course.loading">
-    <img src="spinner.gif" /> Loading results...
+    <img src="assets/spinner.gif" /> Loading results...
 </div>
 <div ng-hide="course.loading">
     {{ course.recordings.length }} results.
@@ -19,7 +19,7 @@
     ng-click="loading == false && course.readUrl(url)">
     Failed to read from <a target="_blank" ng-href="{{ url }}">{{ url }}</a>
     <span ng-hide="loading">Click here to try again.</span>
-    <span ng-show="loading"><img src="spinner.gif" /> Loading...</span>
+    <span ng-show="loading"><img src="assets/spinner.gif" /> Loading...</span>
 </div>
 
 <div class="recording" ng-repeat="recording in course.recordings | orderBy:'date'">
