@@ -2,6 +2,8 @@
 app.controller('SearchController', ['$scope', 'courses', 
     function($scope, courses) {
     var self = this;
+
+    // Course data
     this.lastUpdated = '';
     this.searchTerm = '';
     this.results = [];
@@ -22,6 +24,9 @@ app.controller('SearchController', ['$scope', 'courses',
     this.input = {
         pageNo: this.currentPage
     };
+
+    // Fields related to sort options
+    this.sortField = 'name';
     
     /* Find results matching given search string */
     this.loadResults = function() {

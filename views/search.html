@@ -39,6 +39,14 @@
         </div>
     </p>
 
+    <p>
+        Sort by
+        <select ng-model="search.sortField">
+            <option value="name">Course name</option>
+            <option value="-lastUpdated">Last updated</option>
+        </select>
+    </p>
+
     <table>
         <colgroup>
             <col span="1" style="width: 80%;" />
@@ -51,7 +59,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="course in search.results | orderBy:'name'" ng-if="$index >= search.startPos && $index < search.endPos">
+            <tr ng-repeat="course in search.results | orderBy:search.sortField" ng-if="$index >= search.startPos && $index < search.endPos">
                 <td><a href="#/course/{{ course.id }}">{{ course.name }}</a></td>
                 <td ng-attr-title="{{ course.lastUpdated | date:'medium' }}">{{ course.lastUpdated | relativeDate }}</td>
             </tr>
