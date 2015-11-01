@@ -2,7 +2,7 @@
     <a href="index.html#/">Back to index</a>
 </div>
 <p>
-    <h3>{{ course.name }}</h3>
+    <h3 ng-bind="course.name"></h3>
     <a ng-hide="course.lectopiaLink.length == 0" 
         ng-href="{{course.lectopiaLink}}">
         View list on Lectopia
@@ -12,7 +12,7 @@
     <img src="assets/spinner.gif" /> Loading results...
 </div>
 <div ng-hide="course.loading">
-    {{ course.recordings.length }} results.
+    <span ng-bind="course.recordings.length"></span> results
 </div>
 
 <div class="error" ng-repeat="(url, loading) in course.failedReads"  
@@ -24,13 +24,17 @@
 
 <div class="recording" ng-repeat="recording in course.recordings | orderBy:'date'">
     <div class="details">
-        Recording {{ $index + 1 }}
-        <div>{{ recording.date | date:'medium' }} - {{ recording.duration }}</div>
+        Recording <span ng-bind="$index + 1"></span>
+        <div> 
+            <span ng-bind="recording.date | date:'medium'"></span> - 
+            <span ng-bind="recording.duration"></span>
+        </div>
     </div>
     <div class="formats">
         <ul ng-show="recording.formats.length > 0">
             <li ng-repeat="format in recording.formats">
-                <a href="https://lectopia.rmit.edu.au/lectopia/casterframe.lasso?fid={{ format.id }}">{{ format.name }}</a>
+                <a href="https://lectopia.rmit.edu.au/lectopia/casterframe.lasso?fid={{ format.id }}"
+                   ng-bind="format.name"></a>
             </li>
         </ul>
         <span ng-show="recording.formats.length == 0">No formats available.</span>
