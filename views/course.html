@@ -17,7 +17,7 @@
 
 <div class="error" ng-repeat="(url, loading) in course.failedReads"  
     ng-click="loading == false && course.readUrl(url)">
-    Failed to read from <a target="_blank" ng-href="{{ url }}">{{ url }}</a>
+    Failed to read from <a target="_blank" ng-href="{{ url }}" ng-bind="url"></a>
     <span ng-hide="loading">Click here to try again.</span>
     <span ng-show="loading"><img src="assets/spinner.gif" /> Loading...</span>
 </div>

@@ -17,12 +17,19 @@
     <p>
         <div ng-hide="search.loading" 
             ng-show="search.results.length > 0" id="result-count">
-            Displaying <span ng-bind="search.startPos + 1 | number"></span> to <span ng-bind="search.endPos | number"></span> of <span ng-bind="search.results.length | number"></span> items.
+            Displaying <span ng-bind="search.startPos + 1 | number"></span> 
+            to <span ng-bind="search.endPos | number"></span> 
+            of <span ng-bind="search.results.length | number"></span> items.
         </div>
 
         <div id="page-links">
-            <a ng-click="search.toggleJumpField(true)" ng-hide="search.editingPage">Jump to page</a>
-            <input ng-blur="search.toggleJumpField(false)" ng-show="search.editingPage" type="number" ng-model="search.input.pageNo" />
+            <a ng-click="search.toggleJumpField(true)" 
+                ng-hide="search.editingPage">
+                Jump to page
+            </a>
+            <input ng-blur="search.toggleJumpField(false)" 
+                ng-show="search.editingPage" type="number" 
+                ng-model="search.input.pageNo" />
             <span class="button" ng-repeat="i in getNumber(search.pageCount) track by $index" 
                 ng-click="search.setPage($index + 1)" 
                 ng-class="{ selected: (search.currentPage == $index + 1) }" 
@@ -64,8 +71,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="course in search.results | orderBy:search.sortField" ng-if="$index >= search.startPos && $index < search.endPos">
-                <td><a href="#/course/{{ course.id }}">{{ course.name }}</a></td>
+            <tr ng-repeat="course in search.results | orderBy:search.sortField" 
+                ng-if="$index >= search.startPos && $index < search.endPos">
+                <td>
+                    <a href="#/course/{{ course.id }}" ng-bind="course.name"></a>
+                </td>
                 <td ng-attr-title="{{ course.lastUpdated | date:'medium' }}"
                     ng-bind="course.lastUpdated | relativeDate"></td>
             </tr>
