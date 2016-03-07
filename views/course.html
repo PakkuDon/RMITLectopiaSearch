@@ -33,8 +33,7 @@
     <div class="formats">
         <ul ng-show="recording.formats.length > 0">
             <li ng-repeat="format in recording.formats">
-                <a href="https://lectopia.rmit.edu.au/lectopia/casterframe.lasso?fid={{ format.id }}"
-                   ng-bind="format.name"></a>
+                <a ng-href="{{ format.download_url }}">{{ format.name }}</a>
             </li>
         </ul>
         <span ng-show="recording.formats.length == 0">No formats available.</span>

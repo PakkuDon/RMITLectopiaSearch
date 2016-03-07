@@ -1,7 +1,9 @@
-app.controller('CourseController', ['$q', '$routeParams', 
-'courses', 'recordings', function($q, $routeParams, courses, recordings) {
+app.controller('CourseController', 
+['$q', '$http', '$routeParams', 'courses', 'recordings', 
+function($q, $http, $routeParams, courses, recordings) {
     var self = this;
     var BASE_URL = 'https://lectopia.rmit.edu.au/lectopia/';
+    var DOWNLOAD_URL = BASE_URL + 'downloadpage.lasso?fid=';
     var YQL_BASE = 'https://query.yahooapis.com/v1/public/yql?q=';
 
     this.name = '';
@@ -24,10 +26,13 @@ app.controller('CourseController', ['$q', '$routeParams',
             var recordingData = [];
 
             // Fetch recording data
-            $q.all(generateCallbacks(course.pageLinks, recordingData))
+            $q.all(getRecordingData(course.pageLinks, recordingData))
             .then(function() {
-                self.recordings = recordingData;
-                self.loading = false;
+                // Fetch download links for recordings
+                $q.all(getDownloadLinks(recordingData)).then(function() {
+                    self.recordings = recordingData;
+                    self.loading = false;    
+                });
             });
             
             // Update view
@@ -43,7 +48,7 @@ app.controller('CourseController', ['$q', '$routeParams',
      * Return array of AJAX calls for each link 
      * contained in links.
      */
-    function generateCallbacks(links, sessions) {
+    function getRecordingData(links, sessions) {
         var callbacks = [];
         
         // Construct $http calls to given links
@@ -61,6 +66,38 @@ app.controller('CourseController', ['$q', '$routeParams',
             ));
         }
         return callbacks;
+    }
+    
+    /**
+     * Return array of asynchronous calls to individual recording files
+     */
+    function getDownloadLinks(recordingData) {
+        var requests = [];
+        
+        for (var i = 0; i < recordingData.length; i++) {
+            var recording = recordingData[i];
+            for (var j = 0; j < recording.formats.length; j++) {
+                var format = recording.formats[j];
+                var query = 'SELECT * FROM html '
+                    + 'WHERE url=\'' + DOWNLOAD_URL + format.id + '\' ';
+                var queryUrl = YQL_BASE
+                    + encodeURIComponent(query)
+                    + '&format=xml';
+                // Retrieve download link for given recording format
+                (function(format) {
+                    requests.push($http.get(queryUrl)
+                        .success(function(data) {
+                            var $data = $(data.replace(/<img[^>]*/g, ''));
+                            format.download_url = $data.find('a')[0].href;
+                        })
+                        .error(function(err) {
+                            // TODO: Error handling
+                        })
+                )})(format);
+            }
+        }
+        
+        return requests;
     }
 
     this.readUrl = function(url) {
